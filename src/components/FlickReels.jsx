@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Navbar from "./Navbar";
 
 export default function FlickReels() {
   const { id } = useParams();
@@ -39,6 +40,7 @@ export default function FlickReels() {
 
   return (
     <div className="min-h-screen w-screen bg-gray-100">
+      <Navbar />
       <div className="w-full flex flex-col md:flex-row gap-4 px-4 md:px-6 py-4">
         {/* VIDEO */}
         <div className="w-full md:flex-1 bg-black flex justify-center items-center rounded-lg overflow-hidden order-1">

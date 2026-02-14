@@ -1,53 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchResult from "./SearchResult";
 
 export default function Home() {
   const [source, setSource] = useState("melolo");
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState([]);
-  const [loading, setLoading] = useState(false);
 
+  const [latestList, setLatestList] = useState([]);
+  const [result, setResult] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+
+  /* =======================
+     SEARCH
+  ======================= */
   const handleSearch = async () => {
     if (!query) return;
 
     setLoading(true);
+    setIsSearching(true);
+
     try {
+      const urlMap = {
+        melolo: `https://api.sansekai.my.id/api/melolo/search?query=${query}&limit=10`,
+        dramabox: `https://api.sansekai.my.id/api/dramabox/search?query=${query}`,
+        flickreels: `https://api.sansekai.my.id/api/flickreels/search?query=${query}`,
+      };
 
-     let url = "";
+      const res = await fetch(urlMap[source]);
+      const json = await res.json();
 
-    switch (source) {
-      case "melolo":
-        url = `https://api.sansekai.my.id/api/melolo/search?query=${query}&limit=10`;
-        break;
+      let data = [];
 
-      case "dramabox":
-        url = `https://api.sansekai.my.id/api/dramabox/search?query=${query}`;
-        break;
+      if (source === "melolo") {
+        data = json?.data?.search_data || [];
+      } else {
+        data = json?.data || json || [];
+      }
 
-      case "flickreels":
-        url = `https://api.sansekai.my.id/api/flickreels/search?query=${query}`;
-        break;
-
-      default:
-        return;
-    }
-
-    
-    const res = await fetch(url);
-    const json = await res.json();
-
-      setResult(
-      source === "melolo"
-        ? json?.data?.search_data || []
-        : json?.data || json || []
-    );
+      setResult(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error(e);
+      setResult([]);
     } finally {
       setLoading(false);
     }
   };
 
+  /* =======================
+     UI
+  ======================= */
   return (
     <div className="min-w-screen min-h-screen bg-gray-100 p-4">
       <div className="max-w-5xl mx-auto">
@@ -58,13 +60,17 @@ export default function Home() {
           {["melolo", "dramabox", "flickreels"].map((s) => (
             <button
               key={s}
-              onClick={() => setSource(s)}
-              className={`px-4 py-2 rounded border
-                ${
-                  source === s
-                    ? "bg-sky-700 text-white"
-                    : "bg-white hover:bg-gray-100"
-                }`}
+              onClick={() => {
+                setSource(s);
+                setResult([]);
+                setQuery("");
+                setIsSearching(false);
+              }}
+              className={`px-4 py-2 rounded border ${
+                source === s
+                  ? "bg-sky-700 text-white"
+                  : "bg-white hover:bg-gray-100"
+              }`}
             >
               {s.toUpperCase()}
             </button>
@@ -75,7 +81,10 @@ export default function Home() {
         <div className="flex gap-2 mb-6">
           <input
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              if (!e.target.value) setIsSearching(false);
+            }}
             placeholder="Cari judul..."
             className="flex-1 border rounded px-3 py-2"
           />
@@ -89,6 +98,12 @@ export default function Home() {
 
         {loading && <p>Loading...</p>}
 
+        {/* TITLE */}
+        <h2 className="text-lg font-semibold mb-2">
+          {isSearching ? "Hasil Pencarian" : ""}
+        </h2>
+
+        {/* RESULT */}
         <SearchResult source={source} data={result} />
       </div>
     </div>
