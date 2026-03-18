@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import SearchResult from "./SearchResult";
+import NewList from "./NewList";
 
 export default function Home() {
   const [source, setSource] = useState("melolo");
@@ -25,6 +26,7 @@ export default function Home() {
         melolo: `https://api.sansekai.my.id/api/melolo/search?query=${query}&limit=10`,
         dramabox: `https://api.sansekai.my.id/api/dramabox/search?query=${query}`,
         flickreels: `https://api.sansekai.my.id/api/flickreels/search?query=${query}`,
+        netshort : `https://api.sansekai.my.id/api/netshort/search?query=${query}`
       };
 
       const res = await fetch(urlMap[source]);
@@ -34,6 +36,8 @@ export default function Home() {
 
       if (source === "melolo") {
         data = json?.data?.search_data || [];
+      } else if (source === "netshort") {
+        data = json?.searchCodeSearchResult || [];
       } else {
         data = json?.data || json || [];
       }
@@ -57,7 +61,7 @@ export default function Home() {
 
         {/* SOURCE PICKER */}
         <div className="flex gap-2 mb-3">
-          {["melolo", "dramabox", "flickreels"].map((s) => (
+          {["melolo", "dramabox", "flickreels", "netshort"].map((s) => (
             <button
               key={s}
               onClick={() => {
@@ -105,6 +109,8 @@ export default function Home() {
 
         {/* RESULT */}
         <SearchResult source={source} data={result} />
+
+        <NewList />
       </div>
     </div>
   );

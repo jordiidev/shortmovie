@@ -57,6 +57,26 @@ const navigate = useNavigate();
           );
         }
 
+        if (source === "netshort") {
+           return (
+            <div
+              key={item.shortPlayId}
+              onClick={() => navigate(`/netshort/${item.shortPlayId}`)}
+              className="bg-white rounded shadow cursor-pointer hover:shadow-lg"
+            >
+              <img
+                src={item.shortPlayCover}
+                className="w-full h-48 object-cover rounded-t"
+              />
+              <div className="p-3">
+                <h3 className="text-sm font-semibold line-clamp-2">
+                  {item.shortPlayName}
+                </h3>
+              </div>
+            </div>
+          );
+        }
+
         // DRAMABOX
         return (
           <div

@@ -4,6 +4,7 @@ import Home from './components/Home.jsx'
 import MeloloPlayer from './components/MeloloPlayer.jsx'
 import DramaboxPlayer from './components/DramaboxPlayer.jsx'
 import FlickReels from './components/FlickReels.jsx';
+import NetShort from './components/NetShort.jsx';
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/melolo/:bookId" element={<MeloloPlayer />} />
         <Route path="/dramabox/:bookId" element={<DramaboxPlayer />} />
         <Route path="/flickreels/:id" element={<FlickReels />} />
+        <Route path="/netshort/:id" element={<NetShort />} />
       </Routes>
     </BrowserRouter>
   )
